@@ -31,10 +31,16 @@ import tensorflow as tf
 import keras
 
 
-x=[[word2lib[word] for word in senetance] for word in x_train]
+x=[[word2id[word] for word in senetance] for word in x_train]
 y=[label2id[label] for label in y_train]
 
 
+from keras.preprocessing.sequence import pad_sequences
+x=pad_sequences(x,max_words)
+
+y=keras.utils.to_categorical(y,num_classes=len(label2id),dtype='float32')
+print("shape of x :{}".format(x.shape))
+print("shape of x :{}".format(y.shape))
 
 
 
