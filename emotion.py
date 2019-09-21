@@ -43,6 +43,35 @@ print("shape of x :{}".format(x.shape))
 print("shape of x :{}".format(y.shape))
 
 
+embeding_dim=100 #The dimention of the word embedings
 
+sequence_input=keras.Input(shape=(max_words,),dtype='int32')
+
+embeded_input=keras.layers.Embedding(len(word2id)+1,embeding_dim,input_length=max_words)(sequence_input)
+embeded_input=keras.layers.Dropout(0.2)(embeded_input)
+
+lstm_out=keras.layers.wrappers.Bidirectional(
+    keras.layers.LSTM(embeding_dim,return_sequences=True)
+)(embeded_input)
+
+lstm_out=keras.layers.Dropout(0.2)(lstm_out)
+
+
+lstm_out=keras.layers.wrappers.Bidirectional(
+    keras.layers.LSTM(embeding_dim,return_sequences=True)
+)(embeded_input)
+
+
+fc=keras.layers.Dense(embeding_dim,activation='relu')(attention_output)
+output=keras.layers.Dense(len(label2id),activation='softmax')(fc)
+
+
+model=keras.Model(inputs=[sequence_input],outputs=output)
+model.compile(loss="categorical_crossentropy",metrics=["accuracy"],optimizer="adam")
+
+
+model.summary()
+
+model.fit(x,y,batch_size=64,validation_split=0.1,shuffle=True)
 
 
