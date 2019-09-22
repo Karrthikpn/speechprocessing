@@ -61,6 +61,14 @@ lstm_out=keras.layers.wrappers.Bidirectional(
     keras.layers.LSTM(embeding_dim,return_sequences=True)
 )(embeded_input)
 
+input_dim = int(lstm_out.shape[2])
+permuted_inputs = keras.layers.Permute((2, 1))(lstm_out)
+attention_vector = keras.layers.TimeDistributed(keras.layers.Dense(1))(lstm_out)
+attention_vector = keras.layers.Reshape((max_words,))(attention_vector)
+attention_vector = keras.layers.Activation('softmax', name='attention_vec')(attention_vector)
+attention_output = keras.layers.Dot(axes=1)([lstm_out, attention_vector])
+
+
 
 fc=keras.layers.Dense(embeding_dim,activation='relu')(attention_output)
 output=keras.layers.Dense(len(label2id),activation='softmax')(fc)
